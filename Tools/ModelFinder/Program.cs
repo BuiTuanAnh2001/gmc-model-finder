@@ -1147,6 +1147,10 @@ public const string PageHtml = """
       background: #fff7ed;
     }
 
+    .is-hidden {
+      display: none !important;
+    }
+
     .source-input {
       min-height: 42px;
       width: 100%;
@@ -1394,7 +1398,8 @@ public const string PageHtml = """
       <div class="meta" id="meta">Scanning model catalog...</div>
     </header>
 
-    <section class="panel source-panel">
+    <!-- Source folder controls are hidden for hosted deployments. Keep the markup for local/debug use if needed later. -->
+    <section class="panel source-panel is-hidden">
       <div class="source-label">Source folder</div>
       <input class="source-input" id="rootPath" aria-label="Model source folder" placeholder="Model source folder" />
       <button class="button" id="chooseRoot">Choose Folder</button>
