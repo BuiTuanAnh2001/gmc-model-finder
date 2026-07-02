@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: gmc-model-finder
+    env: docker
+    plan: free
+    autoDeploy: false
+    envVars:
+      - key: MODEL_FINDER_ROOT
+        value: /app

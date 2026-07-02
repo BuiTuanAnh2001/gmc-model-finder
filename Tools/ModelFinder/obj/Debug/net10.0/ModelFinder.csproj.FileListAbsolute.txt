@@ -1,0 +1,15 @@
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/ModelFinder
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/ModelFinder.deps.json
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/ModelFinder.runtimeconfig.json
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/ModelFinder.dll
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/ModelFinder.pdb
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.GeneratedMSBuildEditorConfig.editorconfig
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.AssemblyInfoInputs.cache
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.AssemblyInfo.cs
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.csproj.CoreCompileInputs.cache
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.dll
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/refint/ModelFinder.dll
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.pdb
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ModelFinder.genruntimeconfig.cache
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/obj/Debug/net10.0/ref/ModelFinder.dll
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/bin/Debug/net10.0/assets/gmc-logo.png

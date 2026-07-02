@@ -1,0 +1,6 @@
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/ModelFinder
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/assets/gmc-logo.png
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/ModelFinder.dll
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/ModelFinder.deps.json
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/ModelFinder.runtimeconfig.json
+/Users/tuananhbui/Documents/dotnet/gmc-api-model/Tools/ModelFinder/publish/ModelFinder.pdb

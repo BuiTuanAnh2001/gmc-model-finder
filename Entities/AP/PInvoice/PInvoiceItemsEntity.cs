@@ -1,0 +1,1376 @@
+using ExpertLib;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace gmc_api.Entities
+{
+    [Table("APPInvoiceItems")]
+    public partial class PInvoiceItemsEntity : BaseInfo
+    {
+        #region Variables
+        protected int _aPPInvoiceItemID;
+        protected String _aAStatus = DefaultAAStatus;
+        protected bool _aASelected = true;
+        protected int _fK_APPInvoiceID;
+        protected int _fK_ICProductID;
+        protected int _fK_ICStockID;
+        protected int _fK_ICStockSlotID;
+        protected int _fK_ICProductTypeID;
+        protected int _fK_ARPriceListID;
+        protected int _fK_TXTaxCodeID;
+        protected int _fK_TXImpTaxCodeID;
+        protected String _aPPInvoiceItemSerialNo = String.Empty;
+        protected bool _aPPInvoiceItemIsStkItm = true;
+        protected String _aPPInvoiceItemType = String.Empty;
+        protected int _aPPInvoiceItemInvoicertOrder;
+        protected String _aPPInvoiceItemDesc = String.Empty;
+        protected decimal _aPPInvoiceItemFact;
+        protected String _aPSalePriceCombo = String.Empty;
+        protected decimal _aPPInvoiceItemUnitPrice;
+        protected decimal _aPPInvoiceItemFUnitPrice;
+        protected decimal _aPPInvoiceItemUnitCost;
+        protected decimal _aPPInvoiceItemDiscPct;
+        protected decimal _aPPInvoiceItemTxPct;
+        protected decimal _aPPInvoiceItemQty;
+        protected decimal _aPPInvoiceItemStkQty;
+        protected decimal _aPPInvoiceItemRQty;
+        protected decimal _aPPInvoiceItemRStkQty;
+        protected decimal _aPPInvoiceItemPrice;
+        protected decimal _aPPInvoiceItemFPrice;
+        protected String _aPPInvoiceItemComment = String.Empty;
+        protected decimal _aPPInvoiceItemUnitVolumn;
+        protected decimal _aPPInvoiceItemUnitWeight;
+        protected decimal _aPPInvoiceItemTxAmt;
+        protected decimal _aPPInvoiceItemFTxAmt;
+        protected decimal _aPPInvoiceItemDiscAmt;
+        protected decimal _aPPInvoiceItemFDiscAmt;
+        protected decimal _aPPInvoiceItemNetAmt;
+        protected decimal _aPPInvoiceItemFNetAmt;
+        protected decimal _aPPInvoiceItemAmtTot;
+        protected decimal _aPPInvoiceItemFAmtTot;
+        protected decimal _aPPInvoiceItemCostTot;
+        protected String _aPPInvoiceItemStatus = DefaultStatus;
+        protected decimal _aPPInvoiceItemImpTxAmt;
+        protected decimal _aPPInvoiceItemImpTxPct;
+        protected decimal _aPPInvoiceItemFImpTxAmt;
+        protected decimal _aPPInvoiceItemShpAmt;
+        protected decimal _aPPInvoiceItemMiscChargeAmt;
+        protected int _fK_GLDebitAccountID;
+        protected int _fK_GLCreditAccountID;
+        protected int _fK_GLDebitVATAccountID;
+        protected int _fK_GLCreditVATAccountID;
+        protected String _aPPInvoiceItemPurchaseReturnStatusCombo = DefaultStatus;
+        protected decimal _aPPInvoiceItemPurchaseReturnRQty;
+        protected String _aPPInvoiceItemAPCreditNoteStatusCombo = DefaultStatus;
+        protected decimal _aPPInvoiceItemAPCreditNoteRQty;
+        protected String _aPPInvoiceItemRcpNo = String.Empty;
+        protected int _fK_GLCostDistID;
+        protected int _fK_FAAssetID;
+        protected decimal _aPPInvoiceItemAllocateLife;
+        protected int _fK_HRDepartmentID;
+        protected int _fK_ICDistributionRuleID;
+        protected int _fK_ICUOMID;
+        protected int _fK_ICStkUOMID;
+        protected int _fK_ICWeightUOMID;
+        protected int _fK_ICVolumeUOMID;
+        protected decimal _aPPInvoiceItemWTot;
+        protected decimal _aPPInvoiceItemVTot;
+        protected decimal _aPPInvoiceItemOrgQty;
+        protected decimal _aPPInvoiceItemExcQty;
+        protected int _fK_ICOrgUOMID;
+        protected decimal _aPPInvoiceItemCQty;
+        protected String _gLTOF01Combo = String.Empty;
+        protected String _gLTOF02Combo = String.Empty;
+        protected String _gLTOF03Combo = String.Empty;
+        protected String _gLTOF04Combo = String.Empty;
+        protected String _gLTOF05Combo = String.Empty;
+        protected String _gLTOF06Combo = String.Empty;
+        protected String _gLTOF07Combo = String.Empty;
+        protected String _gLTOF08Combo = String.Empty;
+        protected String _gLTOF09Combo = String.Empty;
+        protected String _gLTOF10Combo = String.Empty;
+        protected int _fK_FAAssetConstructionID;
+        protected decimal _aPPInvoiceItemFImportCostAmt;
+        protected decimal _aPPInvoiceItemImportCostAmt;
+        protected decimal _aPPInvoiceItemFImpTxAmtTot;
+        protected decimal _aPPInvoiceItemImpTxAmtTot;
+        protected int _fK_TXDiffTaxCodeID;
+        protected decimal _aPPInvoiceItemTxDiffPct;
+        protected decimal _aPPInvoiceItemTxDiffFAmt;
+        protected decimal _aPPInvoiceItemTxDiffAmt;
+        protected decimal _aPPInvoiceItemTxDiffFAmtTot;
+        protected decimal _aPPInvoiceItemTxDiffAmtTot;
+        protected decimal _aPPInvoiceItemFTxAmtTot;
+        protected decimal _aPPInvoiceItemTxAmtTot;
+        protected decimal _aPPInvoiceItemCalcImpTaxAmt;
+        protected decimal _aPPInvoiceItemCalcImpTaxFAmt;
+        protected String _gLTOF11Combo = String.Empty;
+        protected String _gLTOF12Combo = String.Empty;
+        protected String _gLTOF13Combo = String.Empty;
+        protected String _gLTOF14Combo = String.Empty;
+        protected String _gLTOF15Combo = String.Empty;
+        protected String _aPPInvoiceItemExcDiffAllocateToType = String.Empty;
+        protected String _aPPInvoiceItemAllocateTypeCombo = String.Empty;
+        protected decimal _aPPInvoiceItemAdjStkQty;
+        protected int _fK_GLBudgetID;
+        protected int _fK_GLBudgetCfgID;
+        protected int _fK_GLBudgetAllocateAdjID;
+        protected int _fK_GLBudgetAllocateAdjItemID;
+        protected int _fK_GLBudgetAllocateAdjDetailID;
+        protected int _fK_APPOID;
+        protected int _fK_APSupplierID;
+        protected int _fK_PPCostCenterID;
+        protected int _fK_ICReceiptID;
+        #endregion
+
+        #region Public properties
+        public int APPInvoiceItemID
+        {
+            get { return _aPPInvoiceItemID; }
+            set
+            {
+                if (value != this._aPPInvoiceItemID)
+                {
+                    _aPPInvoiceItemID = value;
+                }
+            }
+        }
+        public String AAStatus
+        {
+            get { return _aAStatus; }
+            set
+            {
+                if (value != this._aAStatus)
+                {
+                    _aAStatus = value;
+                }
+            }
+        }
+        public bool AASelected
+        {
+            get { return _aASelected; }
+            set
+            {
+                if (value != this._aASelected)
+                {
+                    _aASelected = value;
+                }
+            }
+        }
+        public int FK_APPInvoiceID
+        {
+            get { return _fK_APPInvoiceID; }
+            set
+            {
+                if (value != this._fK_APPInvoiceID)
+                {
+                    _fK_APPInvoiceID = value;
+                }
+            }
+        }
+        public int FK_ICProductID
+        {
+            get { return _fK_ICProductID; }
+            set
+            {
+                if (value != this._fK_ICProductID)
+                {
+                    _fK_ICProductID = value;
+                }
+            }
+        }
+        public int FK_ICStockID
+        {
+            get { return _fK_ICStockID; }
+            set
+            {
+                if (value != this._fK_ICStockID)
+                {
+                    _fK_ICStockID = value;
+                }
+            }
+        }
+        public int FK_ICStockSlotID
+        {
+            get { return _fK_ICStockSlotID; }
+            set
+            {
+                if (value != this._fK_ICStockSlotID)
+                {
+                    _fK_ICStockSlotID = value;
+                }
+            }
+        }
+        public int FK_ICProductTypeID
+        {
+            get { return _fK_ICProductTypeID; }
+            set
+            {
+                if (value != this._fK_ICProductTypeID)
+                {
+                    _fK_ICProductTypeID = value;
+                }
+            }
+        }
+        public int FK_ARPriceListID
+        {
+            get { return _fK_ARPriceListID; }
+            set
+            {
+                if (value != this._fK_ARPriceListID)
+                {
+                    _fK_ARPriceListID = value;
+                }
+            }
+        }
+        public int FK_TXTaxCodeID
+        {
+            get { return _fK_TXTaxCodeID; }
+            set
+            {
+                if (value != this._fK_TXTaxCodeID)
+                {
+                    _fK_TXTaxCodeID = value;
+                }
+            }
+        }
+        public int FK_TXImpTaxCodeID
+        {
+            get { return _fK_TXImpTaxCodeID; }
+            set
+            {
+                if (value != this._fK_TXImpTaxCodeID)
+                {
+                    _fK_TXImpTaxCodeID = value;
+                }
+            }
+        }
+        public String APPInvoiceItemSerialNo
+        {
+            get { return _aPPInvoiceItemSerialNo; }
+            set
+            {
+                if (value != this._aPPInvoiceItemSerialNo)
+                {
+                    _aPPInvoiceItemSerialNo = value;
+                }
+            }
+        }
+        public bool APPInvoiceItemIsStkItm
+        {
+            get { return _aPPInvoiceItemIsStkItm; }
+            set
+            {
+                if (value != this._aPPInvoiceItemIsStkItm)
+                {
+                    _aPPInvoiceItemIsStkItm = value;
+                }
+            }
+        }
+        public String APPInvoiceItemType
+        {
+            get { return _aPPInvoiceItemType; }
+            set
+            {
+                if (value != this._aPPInvoiceItemType)
+                {
+                    _aPPInvoiceItemType = value;
+                }
+            }
+        }
+        public int APPInvoiceItemInvoicertOrder
+        {
+            get { return _aPPInvoiceItemInvoicertOrder; }
+            set
+            {
+                if (value != this._aPPInvoiceItemInvoicertOrder)
+                {
+                    _aPPInvoiceItemInvoicertOrder = value;
+                }
+            }
+        }
+        public String APPInvoiceItemDesc
+        {
+            get { return _aPPInvoiceItemDesc; }
+            set
+            {
+                if (value != this._aPPInvoiceItemDesc)
+                {
+                    _aPPInvoiceItemDesc = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFact
+        {
+            get { return _aPPInvoiceItemFact; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFact)
+                {
+                    _aPPInvoiceItemFact = value;
+                }
+            }
+        }
+        public String APSalePriceCombo
+        {
+            get { return _aPSalePriceCombo; }
+            set
+            {
+                if (value != this._aPSalePriceCombo)
+                {
+                    _aPSalePriceCombo = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemUnitPrice
+        {
+            get { return _aPPInvoiceItemUnitPrice; }
+            set
+            {
+                if (value != this._aPPInvoiceItemUnitPrice)
+                {
+                    _aPPInvoiceItemUnitPrice = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFUnitPrice
+        {
+            get { return _aPPInvoiceItemFUnitPrice; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFUnitPrice)
+                {
+                    _aPPInvoiceItemFUnitPrice = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemUnitCost
+        {
+            get { return _aPPInvoiceItemUnitCost; }
+            set
+            {
+                if (value != this._aPPInvoiceItemUnitCost)
+                {
+                    _aPPInvoiceItemUnitCost = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemDiscPct
+        {
+            get { return _aPPInvoiceItemDiscPct; }
+            set
+            {
+                if (value != this._aPPInvoiceItemDiscPct)
+                {
+                    _aPPInvoiceItemDiscPct = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxPct
+        {
+            get { return _aPPInvoiceItemTxPct; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxPct)
+                {
+                    _aPPInvoiceItemTxPct = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemQty
+        {
+            get { return _aPPInvoiceItemQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemQty)
+                {
+                    _aPPInvoiceItemQty = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemStkQty
+        {
+            get { return _aPPInvoiceItemStkQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemStkQty)
+                {
+                    _aPPInvoiceItemStkQty = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemRQty
+        {
+            get { return _aPPInvoiceItemRQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemRQty)
+                {
+                    _aPPInvoiceItemRQty = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemRStkQty
+        {
+            get { return _aPPInvoiceItemRStkQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemRStkQty)
+                {
+                    _aPPInvoiceItemRStkQty = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemPrice
+        {
+            get { return _aPPInvoiceItemPrice; }
+            set
+            {
+                if (value != this._aPPInvoiceItemPrice)
+                {
+                    _aPPInvoiceItemPrice = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFPrice
+        {
+            get { return _aPPInvoiceItemFPrice; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFPrice)
+                {
+                    _aPPInvoiceItemFPrice = value;
+                }
+            }
+        }
+        public String APPInvoiceItemComment
+        {
+            get { return _aPPInvoiceItemComment; }
+            set
+            {
+                if (value != this._aPPInvoiceItemComment)
+                {
+                    _aPPInvoiceItemComment = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemUnitVolumn
+        {
+            get { return _aPPInvoiceItemUnitVolumn; }
+            set
+            {
+                if (value != this._aPPInvoiceItemUnitVolumn)
+                {
+                    _aPPInvoiceItemUnitVolumn = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemUnitWeight
+        {
+            get { return _aPPInvoiceItemUnitWeight; }
+            set
+            {
+                if (value != this._aPPInvoiceItemUnitWeight)
+                {
+                    _aPPInvoiceItemUnitWeight = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxAmt
+        {
+            get { return _aPPInvoiceItemTxAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxAmt)
+                {
+                    _aPPInvoiceItemTxAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFTxAmt
+        {
+            get { return _aPPInvoiceItemFTxAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFTxAmt)
+                {
+                    _aPPInvoiceItemFTxAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemDiscAmt
+        {
+            get { return _aPPInvoiceItemDiscAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemDiscAmt)
+                {
+                    _aPPInvoiceItemDiscAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFDiscAmt
+        {
+            get { return _aPPInvoiceItemFDiscAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFDiscAmt)
+                {
+                    _aPPInvoiceItemFDiscAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemNetAmt
+        {
+            get { return _aPPInvoiceItemNetAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemNetAmt)
+                {
+                    _aPPInvoiceItemNetAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFNetAmt
+        {
+            get { return _aPPInvoiceItemFNetAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFNetAmt)
+                {
+                    _aPPInvoiceItemFNetAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemAmtTot
+        {
+            get { return _aPPInvoiceItemAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAmtTot)
+                {
+                    _aPPInvoiceItemAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFAmtTot
+        {
+            get { return _aPPInvoiceItemFAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFAmtTot)
+                {
+                    _aPPInvoiceItemFAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemCostTot
+        {
+            get { return _aPPInvoiceItemCostTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemCostTot)
+                {
+                    _aPPInvoiceItemCostTot = value;
+                }
+            }
+        }
+        public String APPInvoiceItemStatus
+        {
+            get { return _aPPInvoiceItemStatus; }
+            set
+            {
+                if (value != this._aPPInvoiceItemStatus)
+                {
+                    _aPPInvoiceItemStatus = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemImpTxAmt
+        {
+            get { return _aPPInvoiceItemImpTxAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemImpTxAmt)
+                {
+                    _aPPInvoiceItemImpTxAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemImpTxPct
+        {
+            get { return _aPPInvoiceItemImpTxPct; }
+            set
+            {
+                if (value != this._aPPInvoiceItemImpTxPct)
+                {
+                    _aPPInvoiceItemImpTxPct = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFImpTxAmt
+        {
+            get { return _aPPInvoiceItemFImpTxAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFImpTxAmt)
+                {
+                    _aPPInvoiceItemFImpTxAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemShpAmt
+        {
+            get { return _aPPInvoiceItemShpAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemShpAmt)
+                {
+                    _aPPInvoiceItemShpAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemMiscChargeAmt
+        {
+            get { return _aPPInvoiceItemMiscChargeAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemMiscChargeAmt)
+                {
+                    _aPPInvoiceItemMiscChargeAmt = value;
+                }
+            }
+        }
+        public int FK_GLDebitAccountID
+        {
+            get { return _fK_GLDebitAccountID; }
+            set
+            {
+                if (value != this._fK_GLDebitAccountID)
+                {
+                    _fK_GLDebitAccountID = value;
+                }
+            }
+        }
+        public int FK_GLCreditAccountID
+        {
+            get { return _fK_GLCreditAccountID; }
+            set
+            {
+                if (value != this._fK_GLCreditAccountID)
+                {
+                    _fK_GLCreditAccountID = value;
+                }
+            }
+        }
+        public int FK_GLDebitVATAccountID
+        {
+            get { return _fK_GLDebitVATAccountID; }
+            set
+            {
+                if (value != this._fK_GLDebitVATAccountID)
+                {
+                    _fK_GLDebitVATAccountID = value;
+                }
+            }
+        }
+        public int FK_GLCreditVATAccountID
+        {
+            get { return _fK_GLCreditVATAccountID; }
+            set
+            {
+                if (value != this._fK_GLCreditVATAccountID)
+                {
+                    _fK_GLCreditVATAccountID = value;
+                }
+            }
+        }
+        public String APPInvoiceItemPurchaseReturnStatusCombo
+        {
+            get { return _aPPInvoiceItemPurchaseReturnStatusCombo; }
+            set
+            {
+                if (value != this._aPPInvoiceItemPurchaseReturnStatusCombo)
+                {
+                    _aPPInvoiceItemPurchaseReturnStatusCombo = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemPurchaseReturnRQty
+        {
+            get { return _aPPInvoiceItemPurchaseReturnRQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemPurchaseReturnRQty)
+                {
+                    _aPPInvoiceItemPurchaseReturnRQty = value;
+                }
+            }
+        }
+        public String APPInvoiceItemAPCreditNoteStatusCombo
+        {
+            get { return _aPPInvoiceItemAPCreditNoteStatusCombo; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAPCreditNoteStatusCombo)
+                {
+                    _aPPInvoiceItemAPCreditNoteStatusCombo = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemAPCreditNoteRQty
+        {
+            get { return _aPPInvoiceItemAPCreditNoteRQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAPCreditNoteRQty)
+                {
+                    _aPPInvoiceItemAPCreditNoteRQty = value;
+                }
+            }
+        }
+        public String APPInvoiceItemRcpNo
+        {
+            get { return _aPPInvoiceItemRcpNo; }
+            set
+            {
+                if (value != this._aPPInvoiceItemRcpNo)
+                {
+                    _aPPInvoiceItemRcpNo = value;
+                }
+            }
+        }
+        public int FK_GLCostDistID
+        {
+            get { return _fK_GLCostDistID; }
+            set
+            {
+                if (value != this._fK_GLCostDistID)
+                {
+                    _fK_GLCostDistID = value;
+                }
+            }
+        }
+        public int FK_FAAssetID
+        {
+            get { return _fK_FAAssetID; }
+            set
+            {
+                if (value != this._fK_FAAssetID)
+                {
+                    _fK_FAAssetID = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemAllocateLife
+        {
+            get { return _aPPInvoiceItemAllocateLife; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAllocateLife)
+                {
+                    _aPPInvoiceItemAllocateLife = value;
+                }
+            }
+        }
+        public int FK_HRDepartmentID
+        {
+            get { return _fK_HRDepartmentID; }
+            set
+            {
+                if (value != this._fK_HRDepartmentID)
+                {
+                    _fK_HRDepartmentID = value;
+                }
+            }
+        }
+        public int FK_ICDistributionRuleID
+        {
+            get { return _fK_ICDistributionRuleID; }
+            set
+            {
+                if (value != this._fK_ICDistributionRuleID)
+                {
+                    _fK_ICDistributionRuleID = value;
+                }
+            }
+        }
+        public int FK_ICUOMID
+        {
+            get { return _fK_ICUOMID; }
+            set
+            {
+                if (value != this._fK_ICUOMID)
+                {
+                    _fK_ICUOMID = value;
+                }
+            }
+        }
+        public int FK_ICStkUOMID
+        {
+            get { return _fK_ICStkUOMID; }
+            set
+            {
+                if (value != this._fK_ICStkUOMID)
+                {
+                    _fK_ICStkUOMID = value;
+                }
+            }
+        }
+        public int FK_ICWeightUOMID
+        {
+            get { return _fK_ICWeightUOMID; }
+            set
+            {
+                if (value != this._fK_ICWeightUOMID)
+                {
+                    _fK_ICWeightUOMID = value;
+                }
+            }
+        }
+        public int FK_ICVolumeUOMID
+        {
+            get { return _fK_ICVolumeUOMID; }
+            set
+            {
+                if (value != this._fK_ICVolumeUOMID)
+                {
+                    _fK_ICVolumeUOMID = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemWTot
+        {
+            get { return _aPPInvoiceItemWTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemWTot)
+                {
+                    _aPPInvoiceItemWTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemVTot
+        {
+            get { return _aPPInvoiceItemVTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemVTot)
+                {
+                    _aPPInvoiceItemVTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemOrgQty
+        {
+            get { return _aPPInvoiceItemOrgQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemOrgQty)
+                {
+                    _aPPInvoiceItemOrgQty = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemExcQty
+        {
+            get { return _aPPInvoiceItemExcQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemExcQty)
+                {
+                    _aPPInvoiceItemExcQty = value;
+                }
+            }
+        }
+        public int FK_ICOrgUOMID
+        {
+            get { return _fK_ICOrgUOMID; }
+            set
+            {
+                if (value != this._fK_ICOrgUOMID)
+                {
+                    _fK_ICOrgUOMID = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemCQty
+        {
+            get { return _aPPInvoiceItemCQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemCQty)
+                {
+                    _aPPInvoiceItemCQty = value;
+                }
+            }
+        }
+        public String GLTOF01Combo
+        {
+            get { return _gLTOF01Combo; }
+            set
+            {
+                if (value != this._gLTOF01Combo)
+                {
+                    _gLTOF01Combo = value;
+                }
+            }
+        }
+        public String GLTOF02Combo
+        {
+            get { return _gLTOF02Combo; }
+            set
+            {
+                if (value != this._gLTOF02Combo)
+                {
+                    _gLTOF02Combo = value;
+                }
+            }
+        }
+        public String GLTOF03Combo
+        {
+            get { return _gLTOF03Combo; }
+            set
+            {
+                if (value != this._gLTOF03Combo)
+                {
+                    _gLTOF03Combo = value;
+                }
+            }
+        }
+        public String GLTOF04Combo
+        {
+            get { return _gLTOF04Combo; }
+            set
+            {
+                if (value != this._gLTOF04Combo)
+                {
+                    _gLTOF04Combo = value;
+                }
+            }
+        }
+        public String GLTOF05Combo
+        {
+            get { return _gLTOF05Combo; }
+            set
+            {
+                if (value != this._gLTOF05Combo)
+                {
+                    _gLTOF05Combo = value;
+                }
+            }
+        }
+        public String GLTOF06Combo
+        {
+            get { return _gLTOF06Combo; }
+            set
+            {
+                if (value != this._gLTOF06Combo)
+                {
+                    _gLTOF06Combo = value;
+                }
+            }
+        }
+        public String GLTOF07Combo
+        {
+            get { return _gLTOF07Combo; }
+            set
+            {
+                if (value != this._gLTOF07Combo)
+                {
+                    _gLTOF07Combo = value;
+                }
+            }
+        }
+        public String GLTOF08Combo
+        {
+            get { return _gLTOF08Combo; }
+            set
+            {
+                if (value != this._gLTOF08Combo)
+                {
+                    _gLTOF08Combo = value;
+                }
+            }
+        }
+        public String GLTOF09Combo
+        {
+            get { return _gLTOF09Combo; }
+            set
+            {
+                if (value != this._gLTOF09Combo)
+                {
+                    _gLTOF09Combo = value;
+                }
+            }
+        }
+        public String GLTOF10Combo
+        {
+            get { return _gLTOF10Combo; }
+            set
+            {
+                if (value != this._gLTOF10Combo)
+                {
+                    _gLTOF10Combo = value;
+                }
+            }
+        }
+        public int FK_FAAssetConstructionID
+        {
+            get { return _fK_FAAssetConstructionID; }
+            set
+            {
+                if (value != this._fK_FAAssetConstructionID)
+                {
+                    _fK_FAAssetConstructionID = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFImportCostAmt
+        {
+            get { return _aPPInvoiceItemFImportCostAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFImportCostAmt)
+                {
+                    _aPPInvoiceItemFImportCostAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemImportCostAmt
+        {
+            get { return _aPPInvoiceItemImportCostAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemImportCostAmt)
+                {
+                    _aPPInvoiceItemImportCostAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFImpTxAmtTot
+        {
+            get { return _aPPInvoiceItemFImpTxAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFImpTxAmtTot)
+                {
+                    _aPPInvoiceItemFImpTxAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemImpTxAmtTot
+        {
+            get { return _aPPInvoiceItemImpTxAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemImpTxAmtTot)
+                {
+                    _aPPInvoiceItemImpTxAmtTot = value;
+                }
+            }
+        }
+        public int FK_TXDiffTaxCodeID
+        {
+            get { return _fK_TXDiffTaxCodeID; }
+            set
+            {
+                if (value != this._fK_TXDiffTaxCodeID)
+                {
+                    _fK_TXDiffTaxCodeID = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxDiffPct
+        {
+            get { return _aPPInvoiceItemTxDiffPct; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxDiffPct)
+                {
+                    _aPPInvoiceItemTxDiffPct = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxDiffFAmt
+        {
+            get { return _aPPInvoiceItemTxDiffFAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxDiffFAmt)
+                {
+                    _aPPInvoiceItemTxDiffFAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxDiffAmt
+        {
+            get { return _aPPInvoiceItemTxDiffAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxDiffAmt)
+                {
+                    _aPPInvoiceItemTxDiffAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxDiffFAmtTot
+        {
+            get { return _aPPInvoiceItemTxDiffFAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxDiffFAmtTot)
+                {
+                    _aPPInvoiceItemTxDiffFAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxDiffAmtTot
+        {
+            get { return _aPPInvoiceItemTxDiffAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxDiffAmtTot)
+                {
+                    _aPPInvoiceItemTxDiffAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemFTxAmtTot
+        {
+            get { return _aPPInvoiceItemFTxAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemFTxAmtTot)
+                {
+                    _aPPInvoiceItemFTxAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemTxAmtTot
+        {
+            get { return _aPPInvoiceItemTxAmtTot; }
+            set
+            {
+                if (value != this._aPPInvoiceItemTxAmtTot)
+                {
+                    _aPPInvoiceItemTxAmtTot = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemCalcImpTaxAmt
+        {
+            get { return _aPPInvoiceItemCalcImpTaxAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemCalcImpTaxAmt)
+                {
+                    _aPPInvoiceItemCalcImpTaxAmt = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemCalcImpTaxFAmt
+        {
+            get { return _aPPInvoiceItemCalcImpTaxFAmt; }
+            set
+            {
+                if (value != this._aPPInvoiceItemCalcImpTaxFAmt)
+                {
+                    _aPPInvoiceItemCalcImpTaxFAmt = value;
+                }
+            }
+        }
+        public String GLTOF11Combo
+        {
+            get { return _gLTOF11Combo; }
+            set
+            {
+                if (value != this._gLTOF11Combo)
+                {
+                    _gLTOF11Combo = value;
+                }
+            }
+        }
+        public String GLTOF12Combo
+        {
+            get { return _gLTOF12Combo; }
+            set
+            {
+                if (value != this._gLTOF12Combo)
+                {
+                    _gLTOF12Combo = value;
+                }
+            }
+        }
+        public String GLTOF13Combo
+        {
+            get { return _gLTOF13Combo; }
+            set
+            {
+                if (value != this._gLTOF13Combo)
+                {
+                    _gLTOF13Combo = value;
+                }
+            }
+        }
+        public String GLTOF14Combo
+        {
+            get { return _gLTOF14Combo; }
+            set
+            {
+                if (value != this._gLTOF14Combo)
+                {
+                    _gLTOF14Combo = value;
+                }
+            }
+        }
+        public String GLTOF15Combo
+        {
+            get { return _gLTOF15Combo; }
+            set
+            {
+                if (value != this._gLTOF15Combo)
+                {
+                    _gLTOF15Combo = value;
+                }
+            }
+        }
+        public String APPInvoiceItemExcDiffAllocateToType
+        {
+            get { return _aPPInvoiceItemExcDiffAllocateToType; }
+            set
+            {
+                if (value != this._aPPInvoiceItemExcDiffAllocateToType)
+                {
+                    _aPPInvoiceItemExcDiffAllocateToType = value;
+                }
+            }
+        }
+        public String APPInvoiceItemAllocateTypeCombo
+        {
+            get { return _aPPInvoiceItemAllocateTypeCombo; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAllocateTypeCombo)
+                {
+                    _aPPInvoiceItemAllocateTypeCombo = value;
+                }
+            }
+        }
+        public decimal APPInvoiceItemAdjStkQty
+        {
+            get { return _aPPInvoiceItemAdjStkQty; }
+            set
+            {
+                if (value != this._aPPInvoiceItemAdjStkQty)
+                {
+                    _aPPInvoiceItemAdjStkQty = value;
+                }
+            }
+        }
+        public int FK_GLBudgetID
+        {
+            get { return _fK_GLBudgetID; }
+            set
+            {
+                if (value != this._fK_GLBudgetID)
+                {
+                    _fK_GLBudgetID = value;
+                }
+            }
+        }
+        public int FK_GLBudgetCfgID
+        {
+            get { return _fK_GLBudgetCfgID; }
+            set
+            {
+                if (value != this._fK_GLBudgetCfgID)
+                {
+                    _fK_GLBudgetCfgID = value;
+                }
+            }
+        }
+        public int FK_GLBudgetAllocateAdjID
+        {
+            get { return _fK_GLBudgetAllocateAdjID; }
+            set
+            {
+                if (value != this._fK_GLBudgetAllocateAdjID)
+                {
+                    _fK_GLBudgetAllocateAdjID = value;
+                }
+            }
+        }
+        public int FK_GLBudgetAllocateAdjItemID
+        {
+            get { return _fK_GLBudgetAllocateAdjItemID; }
+            set
+            {
+                if (value != this._fK_GLBudgetAllocateAdjItemID)
+                {
+                    _fK_GLBudgetAllocateAdjItemID = value;
+                }
+            }
+        }
+        public int FK_GLBudgetAllocateAdjDetailID
+        {
+            get { return _fK_GLBudgetAllocateAdjDetailID; }
+            set
+            {
+                if (value != this._fK_GLBudgetAllocateAdjDetailID)
+                {
+                    _fK_GLBudgetAllocateAdjDetailID = value;
+                }
+            }
+        }
+        public int FK_APPOID
+        {
+            get { return _fK_APPOID; }
+            set
+            {
+                if (value != this._fK_APPOID)
+                {
+                    _fK_APPOID = value;
+                }
+            }
+        }
+        public int FK_APSupplierID
+        {
+            get { return _fK_APSupplierID; }
+            set
+            {
+                if (value != this._fK_APSupplierID)
+                {
+                    _fK_APSupplierID = value;
+                }
+            }
+        }
+        public int FK_PPCostCenterID
+        {
+            get { return _fK_PPCostCenterID; }
+            set
+            {
+                if (value != this._fK_PPCostCenterID)
+                {
+                    _fK_PPCostCenterID = value;
+                }
+            }
+        }
+        public int FK_ICReceiptID
+        {
+            get { return _fK_ICReceiptID; }
+            set
+            {
+                if (value != this._fK_ICReceiptID)
+                {
+                    _fK_ICReceiptID = value;
+                }
+            }
+        }
+
+        #endregion
+    }
+
+
+}

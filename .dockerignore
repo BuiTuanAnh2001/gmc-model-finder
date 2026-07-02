@@ -1,0 +1,9 @@
+.DS_Store
+**/.DS_Store
+**/bin/
+**/obj/
+Tools/ModelFinder/publish/
+Tools/ModelFinder/*.tar.gz
+.git/
+.agents/
+.codex/
