@@ -1022,7 +1022,7 @@ static class NameTools
 
 static class HtmlAssets
 {
-public const string PageHtml = """
+    public const string PageHtml = """
 <!doctype html>
 <html lang="en">
 <head>
@@ -1032,18 +1032,20 @@ public const string PageHtml = """
   <style>
     :root {
       color-scheme: light;
-      --navy: #112d63;
-      --navy-deep: #0c234f;
-      --orange: #ff9314;
-      --orange-deep: #e47500;
-      --ink: #17213a;
-      --muted: #66718a;
-      --paper: #f4f7fb;
+      --navy: #0d3267;
+      --navy-deep: #061e43;
+      --orange: #ff9412;
+      --orange-deep: #df7400;
+      --ink: #152033;
+      --muted: #667085;
+      --paper: #f4f6f9;
       --panel: #ffffff;
-      --line: #d8deea;
-      --warn: #a33c1f;
-      --ok: #176a45;
-      --shadow: 0 18px 44px rgba(17, 45, 99, .12);
+      --soft: #f8fafc;
+      --editor: #eef2f7;
+      --line: #d6dce7;
+      --warn: #c33b2d;
+      --ok: #15804d;
+      --shadow: 0 1px 2px rgba(16, 24, 40, .06);
     }
 
     * { box-sizing: border-box; }
@@ -1052,8 +1054,9 @@ public const string PageHtml = """
       margin: 0;
       min-height: 100vh;
       font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(180deg, #edf2f8 0, var(--paper) 260px);
+      background: var(--paper);
       color: var(--ink);
+      padding: 0;
     }
 
     button, textarea, input {
@@ -1061,9 +1064,16 @@ public const string PageHtml = """
     }
 
     .shell {
-      width: min(1480px, calc(100vw - 32px));
-      margin: 0 auto;
-      padding: 20px 0 28px;
+      width: 100%;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0 24px 16px;
+      background: var(--panel);
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+      display: flex;
+      flex-direction: column;
     }
 
     .topbar {
@@ -1071,28 +1081,26 @@ public const string PageHtml = """
       justify-content: space-between;
       align-items: center;
       gap: 20px;
-      border-top: 4px solid var(--orange);
-      border-bottom: 1px solid rgba(216, 222, 234, .9);
-      padding: 16px 18px;
-      margin-bottom: 18px;
-      background: var(--panel);
-      box-shadow: var(--shadow);
-      border-radius: 8px;
+      border-bottom: 1px solid var(--line);
+      padding: 18px 0 14px;
+      margin-bottom: 14px;
+      background: transparent;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
       min-width: 0;
     }
 
     .brand-mark {
-      width: 236px;
-      max-width: min(236px, 58vw);
+      width: 52px;
+      max-width: 52px;
       height: auto;
       flex: 0 0 auto;
       display: block;
+      object-fit: contain;
     }
 
     .fallback-logo {
@@ -1101,16 +1109,16 @@ public const string PageHtml = """
 
     .brand-title {
       min-width: 0;
-      border-left: 1px solid var(--line);
-      padding-left: 18px;
+      padding-right: 22px;
+      border-right: 1px solid var(--line);
     }
 
     h1 {
-      margin: 0 0 3px;
-      font-size: clamp(21px, 2.4vw, 32px);
+      margin: 0 0 2px;
+      font-size: 27px;
       line-height: 1.05;
       letter-spacing: 0;
-      color: var(--navy);
+      color: #0b1f3c;
       font-weight: 800;
       white-space: nowrap;
     }
@@ -1118,54 +1126,58 @@ public const string PageHtml = """
     .subtitle {
       color: var(--muted);
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 650;
     }
 
     .meta {
-      color: var(--muted);
+      color: #374151;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12px;
-      text-align: right;
-      line-height: 1.55;
+      font-weight: 700;
+      line-height: 1;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 999px;
+      padding: 8px 13px;
+      white-space: nowrap;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
     }
 
     .workspace {
       display: grid;
-      grid-template-columns: minmax(360px, 470px) minmax(0, 1fr);
-      gap: 18px;
-      align-items: start;
+      grid-template-columns: minmax(320px, 400px) minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
+      flex: 1;
+      min-height: 0;
     }
 
     .source-panel {
       display: grid;
       grid-template-columns: auto minmax(0, 1fr) auto auto;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
-      padding: 14px;
-      margin-bottom: 18px;
-      border-color: rgba(255, 147, 20, .45);
-      background: #fff7ed;
-    }
-
-    .is-hidden {
-      display: none !important;
+      padding: 15px;
+      margin-bottom: 14px;
+      background: #fbfcfe;
     }
 
     .source-input {
-      min-height: 42px;
+      min-height: 40px;
       width: 100%;
       border: 1px solid var(--line);
       border-radius: 6px;
-      padding: 9px 11px;
+      padding: 9px 12px 9px 38px;
       outline: none;
       color: var(--ink);
-      background: rgba(255,255,255,.45);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 12px;
+      background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='19' height='19' viewBox='0 0 24 24' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z'/%3E%3C/svg%3E") 13px center / 18px 18px no-repeat,
+        #f7f9fc;
+      font-size: 14px;
     }
 
     .source-label {
-      color: var(--navy);
+      color: #374151;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12px;
       font-weight: 700;
@@ -1176,14 +1188,16 @@ public const string PageHtml = """
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      box-shadow: var(--shadow);
       border-radius: 8px;
+      box-shadow: none;
     }
 
     .input-panel {
-      position: sticky;
-      top: 18px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
     }
 
     .panel-head {
@@ -1191,9 +1205,9 @@ public const string PageHtml = """
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--line);
-      background: #f8fafc;
+      background: var(--soft);
     }
 
     .label {
@@ -1202,50 +1216,105 @@ public const string PageHtml = """
       text-transform: uppercase;
       letter-spacing: .08em;
       color: var(--muted);
+      font-weight: 700;
+    }
+
+    .threshold {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    #limit {
+      width: 58px;
+      min-height: 32px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      background: white;
+      outline: none;
+    }
+
+    .editor-wrap {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      flex: 1;
+      min-height: 0;
+      background: var(--editor);
+    }
+
+    .line-numbers {
+      padding-top: 17px;
+      border-right: 1px solid var(--line);
+      color: #9aa4b2;
+      background: #edf1f6;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.65;
+      text-align: right;
+      user-select: none;
+      padding-right: 9px;
     }
 
     textarea {
       width: 100%;
-      min-height: 520px;
+      height: 100%;
+      min-height: 0;
       border: 0;
-      resize: vertical;
+      resize: none;
       padding: 16px;
       outline: none;
-      background: transparent;
-      color: var(--ink);
+      background: #f0f4f9;
+      color: #111827;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 13px;
-      line-height: 1.55;
+      line-height: 1.65;
     }
 
     .actions {
       display: flex;
       gap: 10px;
-      padding: 14px 16px 16px;
+      padding: 14px;
       border-top: 1px solid var(--line);
       align-items: center;
+      background: #f8fafc;
     }
 
     .button {
       border: 1px solid var(--orange-deep);
       background: var(--orange);
-      color: white;
-      border-radius: 6px;
-      padding: 10px 14px;
+      color: #272015;
+      border-radius: 4px;
+      padding: 9px 16px;
       cursor: pointer;
-      min-height: 42px;
+      min-height: 40px;
+      font-size: 14px;
+      font-weight: 650;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      white-space: nowrap;
     }
 
     .button.secondary {
-      background: transparent;
+      background: white;
       color: var(--navy);
       border-color: var(--line);
     }
 
     .button.danger {
-      background: #9f2f1f;
-      border-color: #7f2216;
-      color: white;
+      background: white;
+      border-color: #f2b8b3;
+      color: var(--warn);
     }
 
     .button:disabled {
@@ -1263,15 +1332,53 @@ public const string PageHtml = """
     .results {
       display: grid;
       gap: 12px;
+      align-content: start;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      height: 100%;
+      min-height: 0;
+      overflow: auto;
     }
 
     .empty {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      align-content: center;
+      gap: 10px;
       padding: 44px;
       color: var(--muted);
       text-align: center;
       border: 1px dashed var(--line);
       border-radius: 8px;
-      background: rgba(255,255,255,.35);
+      background: #fbfcfe;
+    }
+
+    .empty-icon {
+      width: 62px;
+      height: 62px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #9db7da;
+      background: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .empty h2 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      color: #252b36;
+    }
+
+    .empty p {
+      width: min(470px, 100%);
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.45;
     }
 
     .result {
@@ -1295,6 +1402,30 @@ public const string PageHtml = """
       font-size: 22px;
       font-weight: 700;
       background: #fff4e4;
+    }
+
+    .app-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      padding-top: 14px;
+      color: var(--navy-deep);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      font-weight: 500;
+    }
+
+    .footer-links a {
+      color: #3f4653;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
 
     .name {
@@ -1362,13 +1493,17 @@ public const string PageHtml = """
     @media (max-width: 920px) {
       .workspace { grid-template-columns: 1fr; }
       .source-panel { grid-template-columns: 1fr; }
-      .input-panel { position: static; }
-      textarea { min-height: 360px; }
+      .shell { min-height: 100vh; padding: 0 14px 14px; }
+      textarea { min-height: 360px; resize: vertical; }
       .topbar { align-items: start; flex-direction: column; }
       .meta { text-align: left; }
       .brand { align-items: flex-start; flex-direction: column; }
-      .brand-title { border-left: 0; padding-left: 0; }
+      .brand-title { border-right: 0; padding-right: 0; }
       h1 { white-space: normal; }
+      .actions { flex-wrap: wrap; }
+      .status { flex-basis: 100%; margin-left: 0; }
+      .app-footer { align-items: flex-start; flex-direction: column; }
+      .footer-links { flex-wrap: wrap; gap: 14px; }
     }
   </style>
 </head>
@@ -1398,11 +1533,13 @@ public const string PageHtml = """
       <div class="meta" id="meta">Scanning model catalog...</div>
     </header>
 
-    <!-- Source folder controls are hidden for hosted deployments. Keep the markup for local/debug use if needed later. -->
-    <section class="panel source-panel is-hidden">
+    <section class="panel source-panel">
       <div class="source-label">Source folder</div>
       <input class="source-input" id="rootPath" aria-label="Model source folder" placeholder="Model source folder" />
-      <button class="button" id="chooseRoot">Choose Folder</button>
+      <button class="button" id="chooseRoot">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+        Choose Folder
+      </button>
       <button class="button secondary" id="applyRoot">Apply Path</button>
     </section>
 
@@ -1410,26 +1547,47 @@ public const string PageHtml = """
       <section class="panel input-panel">
         <div class="panel-head">
           <div class="label">API JSON response</div>
-          <input id="limit" type="number" min="1" max="100" value="20" aria-label="Result limit" />
+          <label class="threshold">Threshold <input id="limit" type="number" min="1" max="100" value="20" aria-label="Result limit" /></label>
         </div>
-        <textarea id="json" spellcheck="false" placeholder='Paste JSON here, for example:&#10;
+        <div class="editor-wrap">
+          <div class="line-numbers" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
+          <textarea id="json" spellcheck="false" placeholder='Paste JSON here, for example:&#10;
     {
     "viewProductionOrdrID":1,
     "viewProductionOrdrDate":"2026-07-01",
     "viewProductionOrdrQty":10
     }'></textarea>
+        </div>
         <div class="actions">
-          <button class="button" id="search">Find Models</button>
-          <button class="button danger" id="cancelSearch" disabled>Cancel Search</button>
+          <button class="button" id="search">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Find Models
+          </button>
+          <button class="button danger" id="cancelSearch" disabled>Cancel</button>
           <button class="button secondary" id="sample">Sample</button>
           <span class="status" id="status"></span>
         </div>
       </section>
 
       <section class="results" id="results">
-        <div class="empty">Paste JSON to find matching classes in Entities and DTO.</div>
+        <div class="empty">
+          <div class="empty-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10 8-4 4 4 4"/><path d="m14 8 4 4-4 4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+          </div>
+          <h2>Awaiting JSON Input</h2>
+          <p>Paste JSON to find matching classes in Entities and DTO. The system will analyze the payload and suggest C# models that fit.</p>
+        </div>
       </section>
     </section>
+
+    <footer class="app-footer">
+      <div>© 2024 GMC Expert ERP-Smart Solution</div>
+      <nav class="footer-links" aria-label="Footer links">
+        <a href="#" aria-label="Documentation">Documentation</a>
+        <a href="#" aria-label="Support">Support</a>
+        <a href="#" aria-label="Release Notes">Release Notes</a>
+      </nav>
+    </footer>
   </main>
 
   <script>
