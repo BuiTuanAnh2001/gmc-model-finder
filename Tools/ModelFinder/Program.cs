@@ -1057,6 +1057,7 @@ static class HtmlAssets
       background: var(--paper);
       color: var(--ink);
       padding: 0;
+      overflow: hidden;
     }
 
     button, textarea, input {
@@ -1065,6 +1066,7 @@ static class HtmlAssets
 
     .shell {
       width: 100%;
+      height: 100vh;
       min-height: 100vh;
       margin: 0;
       padding: 0 24px 16px;
@@ -1150,6 +1152,7 @@ static class HtmlAssets
       align-items: stretch;
       flex: 1;
       min-height: 0;
+      overflow: hidden;
     }
 
     .source-panel {
@@ -1198,6 +1201,7 @@ static class HtmlAssets
       flex-direction: column;
       height: 100%;
       min-height: 0;
+      min-width: 0;
     }
 
     .panel-head {
@@ -1333,12 +1337,14 @@ static class HtmlAssets
       display: grid;
       gap: 12px;
       align-content: start;
+      grid-auto-rows: max-content;
       padding: 15px;
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
       height: 100%;
       min-height: 0;
+      min-width: 0;
       overflow: auto;
     }
 
@@ -1493,7 +1499,10 @@ static class HtmlAssets
     @media (max-width: 920px) {
       .workspace { grid-template-columns: 1fr; }
       .source-panel { grid-template-columns: 1fr; }
-      .shell { min-height: 100vh; padding: 0 14px 14px; }
+      body { overflow: auto; }
+      .shell { height: auto; min-height: 100vh; padding: 0 14px 14px; }
+      .workspace { overflow: visible; }
+      .input-panel, .results { height: auto; }
       textarea { min-height: 360px; resize: vertical; }
       .topbar { align-items: start; flex-direction: column; }
       .meta { text-align: left; }
@@ -1537,7 +1546,7 @@ static class HtmlAssets
       <section class="panel input-panel">
         <div class="panel-head">
           <div class="label">API JSON response</div>
-          <label class="threshold">Threshold <input id="limit" type="number" min="1" max="100" value="20" aria-label="Result limit" /></label>
+          <label class="threshold">Threshold <input id="limit" type="number" min="1" max="100" value="5" aria-label="Result limit" /></label>
         </div>
         <div class="editor-wrap">
           <div class="line-numbers" aria-hidden="true">1<br>2<br>3<br>4<br>5<br>6<br>7<br>8</div>
@@ -1611,8 +1620,8 @@ static class HtmlAssets
 
     searchButton.addEventListener('click', search);
     cancelSearchButton.addEventListener('click', cancelSearch);
-    chooseRootButton.addEventListener('click', chooseRoot);
-    applyRootButton.addEventListener('click', applyRoot);
+    chooseRootButton?.addEventListener('click', chooseRoot);
+    applyRootButton?.addEventListener('click', applyRoot);
     jsonInput.addEventListener('keydown', event => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') search();
     });
@@ -1638,8 +1647,8 @@ static class HtmlAssets
 
     async function updateRoot(url, body, message) {
       statusEl.textContent = message;
-      chooseRootButton.disabled = true;
-      applyRootButton.disabled = true;
+      if (chooseRootButton) chooseRootButton.disabled = true;
+      if (applyRootButton) applyRootButton.disabled = true;
       try {
         const response = await fetch(url, {
           method: 'POST',
@@ -1654,13 +1663,13 @@ static class HtmlAssets
         statusEl.textContent = '';
         resultsEl.innerHTML = `<div class="empty warn">${escapeHtml(error.message)}</div>`;
       } finally {
-        chooseRootButton.disabled = false;
-        applyRootButton.disabled = false;
+        if (chooseRootButton) chooseRootButton.disabled = false;
+        if (applyRootButton) applyRootButton.disabled = false;
       }
     }
 
     function updateCatalog(data) {
-      rootPathInput.value = data.root || '';
+      if (rootPathInput) rootPathInput.value = data.root || '';
       metaEl.textContent = `${data.modelCount} models / ${data.propertyCount} properties`;
     }
 
@@ -1716,7 +1725,7 @@ static class HtmlAssets
               <span class="badge">${result.propertyCount} properties</span>
               <span class="badge">${result.missingFields.length} missing</span>
             </div>
-            <details ${index === 0 ? 'open' : ''}>
+            <details>
               <summary>Matched fields</summary>
               <table>
                 <thead>
