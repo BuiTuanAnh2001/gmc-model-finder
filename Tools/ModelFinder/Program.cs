@@ -465,14 +465,27 @@ record ModelInfo(
 record ModelProperty(
     string Name,
     string Type,
+    IReadOnlyList<string> JsonNames,
     [property: JsonIgnore] string NormalizedName,
+    [property: JsonIgnore] IReadOnlySet<string> SearchNames,
     [property: JsonIgnore] IReadOnlySet<string> Tokens);
 
 static class ModelPropertyFactory
 {
-    public static ModelProperty Create(string name, string type)
+    public static ModelProperty Create(string name, string type, IReadOnlyList<string> jsonNames)
     {
-        return new ModelProperty(name, type, NameTools.Normalize(name), NameTools.Tokenize(name));
+        var normalizedName = NameTools.Normalize(name);
+        var searchNames = jsonNames
+            .Select(NameTools.Normalize)
+            .Append(normalizedName)
+            .Where(value => value.Length > 0)
+            .ToHashSet(StringComparer.Ordinal);
+        var tokens = jsonNames
+            .Append(name)
+            .SelectMany(NameTools.Tokenize)
+            .ToHashSet(StringComparer.Ordinal);
+
+        return new ModelProperty(name, type, jsonNames, normalizedName, searchNames, tokens);
     }
 }
 
@@ -496,7 +509,13 @@ static class ModelCatalog
 {
     private static readonly Regex ClassRegex = new(@"\bpublic\s+(?:partial\s+)?class\s+([A-Za-z_][A-Za-z0-9_]*)", RegexOptions.Compiled);
     private static readonly Regex PropertyRegex = new(
-        @"\bpublic\s+(?!class\b|interface\b|enum\b|static\b)([A-Za-z_][A-Za-z0-9_<>,\.\?\[\]\s]*)\s+([A-Za-z_][A-Za-z0-9_]*)\s*\{",
+        @"(?<attrs>(?:\s*\[[^\]]+\]\s*)*)\bpublic\s+(?!class\b|interface\b|enum\b|static\b)(?<type>[A-Za-z_][A-Za-z0-9_<>,\.\?\[\]\s]*)\s+(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*\{",
+        RegexOptions.Compiled);
+    private static readonly Regex JsonAttributeRegex = new(
+        @"\[(?:[A-Za-z_][A-Za-z0-9_]*\.)?(?:JsonProperty|JsonPropertyName)\b(?<args>[^\]]*)\]",
+        RegexOptions.Compiled);
+    private static readonly Regex JsonNameLiteralRegex = new(
+        @"(?:PropertyName\s*=\s*)?""(?<name>(?:\\.|[^""\\])*)""",
         RegexOptions.Compiled);
 
     public static ModelCatalogSnapshot Load(string root)
@@ -525,8 +544,9 @@ static class ModelCatalog
 
                 var properties = PropertyRegex.Matches(text)
                     .Select(match => ModelPropertyFactory.Create(
-                        match.Groups[2].Value.Trim(),
-                        Regex.Replace(match.Groups[1].Value, @"\s+", "")))
+                        match.Groups["name"].Value.Trim(),
+                        Regex.Replace(match.Groups["type"].Value, @"\s+", ""),
+                        ReadJsonNames(match.Groups["attrs"].Value)))
                     .Where(property => !string.Equals(property.Name, "Item", StringComparison.Ordinal))
                     .DistinctBy(property => property.Name)
                     .ToList();
@@ -537,8 +557,9 @@ static class ModelCatalog
                 }
 
                 var modelPropertiesByName = properties
-                    .GroupBy(property => property.NormalizedName, StringComparer.Ordinal)
-                    .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+                    .SelectMany(property => property.SearchNames.Select(searchName => new { searchName, property }))
+                    .GroupBy(item => item.searchName, StringComparer.Ordinal)
+                    .ToDictionary(group => group.Key, group => group.First().property, StringComparer.Ordinal);
                 var relativePath = Path.GetRelativePath(root, file);
                 foreach (var className in classes)
                 {
@@ -547,13 +568,18 @@ static class ModelCatalog
             }
         }
 
-        var indexedProperties = models
+        var modelProperties = models
             .SelectMany(model => model.Properties.Select(property => new IndexedProperty(model, property)))
+            .ToList();
+        var indexedProperties = models
+            .SelectMany(model => model.Properties.SelectMany(property => property.SearchNames.Select(_ => new IndexedProperty(model, property))))
+            .DistinctBy(item => (item.Model, item.Property.Name))
             .ToList();
 
         var propertiesByName = indexedProperties
-            .GroupBy(item => item.Property.NormalizedName, StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => (IReadOnlyList<IndexedProperty>)group.ToList(), StringComparer.Ordinal);
+            .SelectMany(item => item.Property.SearchNames.Select(searchName => new { searchName, item }))
+            .GroupBy(item => item.searchName, StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => (IReadOnlyList<IndexedProperty>)group.Select(item => item.item).ToList(), StringComparer.Ordinal);
 
         var propertiesByToken = indexedProperties
             .SelectMany(item => item.Property.Tokens.Select(token => new { token, item }))
@@ -561,11 +587,27 @@ static class ModelCatalog
             .ToDictionary(group => group.Key, group => (IReadOnlyList<IndexedProperty>)group.Select(item => item.item).ToList(), StringComparer.Ordinal);
 
         var propertiesByPrefix = indexedProperties
-            .Where(item => item.Property.NormalizedName.Length >= 6)
-            .GroupBy(item => NameTools.PrefixKey(item.Property.NormalizedName), StringComparer.Ordinal)
-            .ToDictionary(group => group.Key, group => (IReadOnlyList<IndexedProperty>)group.ToList(), StringComparer.Ordinal);
+            .SelectMany(item => item.Property.SearchNames.Where(searchName => searchName.Length >= 6).Select(searchName => new { searchName, item }))
+            .GroupBy(item => NameTools.PrefixKey(item.searchName), StringComparer.Ordinal)
+            .ToDictionary(group => group.Key, group => (IReadOnlyList<IndexedProperty>)group.Select(item => item.item).Distinct().ToList(), StringComparer.Ordinal);
 
-        return new ModelCatalogSnapshot(models, indexedProperties.Count, propertiesByName, propertiesByToken, propertiesByPrefix);
+        return new ModelCatalogSnapshot(models, modelProperties.Count, propertiesByName, propertiesByToken, propertiesByPrefix);
+    }
+
+    private static IReadOnlyList<string> ReadJsonNames(string attributes)
+    {
+        if (string.IsNullOrWhiteSpace(attributes))
+        {
+            return [];
+        }
+
+        return JsonAttributeRegex.Matches(attributes)
+            .Select(match => JsonNameLiteralRegex.Match(match.Groups["args"].Value))
+            .Where(match => match.Success)
+            .Select(match => Regex.Unescape(match.Groups["name"].Value))
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
     }
 
     private static string ReadSourceText(string file)
@@ -771,7 +813,7 @@ static class ModelMatcher
 
         foreach (var property in model.Properties)
         {
-            if (NameTools.PrefixKey(property.NormalizedName) != NameTools.PrefixKey(field.NormalizedName))
+            if (!property.SearchNames.Any(searchName => NameTools.PrefixKey(searchName) == NameTools.PrefixKey(field.NormalizedName)))
             {
                 continue;
             }
@@ -919,35 +961,43 @@ static class ModelMatcher
 
     private static double NameScore(string normalizedJsonName, IReadOnlySet<string> jsonTokens, ModelProperty property)
     {
-        var right = property.NormalizedName;
-        if (normalizedJsonName.Length == 0 || right.Length == 0)
+        if (normalizedJsonName.Length == 0)
         {
             return 0;
         }
 
-        if (normalizedJsonName == right)
+        var best = 0.0;
+        foreach (var right in property.SearchNames)
         {
-            return 1;
-        }
+            if (right.Length == 0)
+            {
+                continue;
+            }
 
-        if (right.EndsWith(normalizedJsonName, StringComparison.Ordinal) || normalizedJsonName.EndsWith(right, StringComparison.Ordinal))
-        {
-            return 0.88;
+            if (normalizedJsonName == right)
+            {
+                return 1;
+            }
+
+            if (right.EndsWith(normalizedJsonName, StringComparison.Ordinal) || normalizedJsonName.EndsWith(right, StringComparison.Ordinal))
+            {
+                best = Math.Max(best, 0.88);
+            }
+
+            var prefixScore = NameTools.CommonPrefixScore(normalizedJsonName, right);
+            if (prefixScore >= 0.55)
+            {
+                best = Math.Max(best, Math.Min(0.86, prefixScore));
+            }
         }
 
         var tokenScore = NameTools.TokenOverlap(jsonTokens, property.Tokens);
         if (tokenScore >= 0.55)
         {
-            return tokenScore;
+            best = Math.Max(best, tokenScore);
         }
 
-        var prefixScore = NameTools.CommonPrefixScore(normalizedJsonName, right);
-        if (prefixScore >= 0.55)
-        {
-            return Math.Min(0.86, prefixScore);
-        }
-
-        return tokenScore;
+        return best;
     }
 }
 
@@ -1466,6 +1516,13 @@ static class HtmlAssets
       background: rgba(255,255,255,.42);
     }
 
+    .json-alias {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
     details {
       border-top: 1px solid var(--line);
       padding-top: 10px;
@@ -1742,7 +1799,10 @@ static class HtmlAssets
                     <tr>
                       <td>${escapeHtml(match.jsonField.path)}</td>
                       <td>${escapeHtml(match.jsonField.kind)}</td>
-                      <td class="${match.matched ? 'ok' : 'warn'}">${escapeHtml(match.property?.name || 'missing')}</td>
+                      <td class="${match.matched ? 'ok' : 'warn'}">
+                        ${escapeHtml(match.property?.name || 'missing')}
+                        ${match.property?.jsonNames?.length ? `<div class="json-alias">JSON: ${escapeHtml(match.property.jsonNames.join(', '))}</div>` : ''}
+                      </td>
                       <td>${escapeHtml(match.property?.type || '')}</td>
                       <td>${Math.round(match.nameScore * 100)}%</td>
                     </tr>
