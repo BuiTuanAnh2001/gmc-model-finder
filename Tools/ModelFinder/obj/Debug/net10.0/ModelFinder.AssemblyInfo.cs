@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ModelFinder")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2ba1a67a19236c19230d7f115c26f6c2e5b6bc3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8a0a888fb45795149e09df4b5e498ecc4e54f33d")]
 [assembly: System.Reflection.AssemblyProductAttribute("ModelFinder")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ModelFinder")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -57,7 +57,9 @@ static async Task HandleClient(TcpClient client, RootState rootState)
         }
 
         var method = parts[0];
-        var path = parts[1].Split('?', 2)[0];
+        var targetParts = parts[1].Split('?', 2);
+        var path = targetParts[0];
+        var query = targetParts.Length == 2 ? ParseQuery(targetParts[1]) : new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         string? line;
         while (!string.IsNullOrEmpty(line = await reader.ReadLineAsync()))
@@ -103,6 +105,28 @@ static async Task HandleClient(TcpClient client, RootState rootState)
                 modelCount = catalog.Models.Count,
                 propertyCount = catalog.PropertyCount
             });
+            return;
+        }
+
+        if (method == "GET" && path == "/api/file")
+        {
+            query.TryGetValue("path", out var relativePath);
+            var filePath = ResolveModelFilePath(rootState.Value, relativePath);
+            if (filePath is null)
+            {
+                await WriteJson(stream, new { error = "Model file not found or invalid path." }, 404);
+                return;
+            }
+
+            var content = await File.ReadAllTextAsync(filePath, Encoding.UTF8);
+            var extraHeaders = new List<string> { "Cache-Control: no-store" };
+            if (query.TryGetValue("download", out var download) && download == "1")
+            {
+                var fileName = Path.GetFileName(filePath).Replace("\"", "", StringComparison.Ordinal);
+                extraHeaders.Add($"Content-Disposition: attachment; filename=\"{fileName}\"");
+            }
+
+            await WriteText(stream, content, "text/plain; charset=utf-8", extraHeaders: extraHeaders);
             return;
         }
 
@@ -308,13 +332,51 @@ static string FindRepositoryRoot(string startDirectory)
     return startDirectory;
 }
 
+static Dictionary<string, string> ParseQuery(string query)
+{
+    var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    foreach (var pair in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+    {
+        var parts = pair.Split('=', 2);
+        var key = WebUtility.UrlDecode(parts[0]) ?? "";
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            continue;
+        }
+
+        values[key] = parts.Length == 2 ? WebUtility.UrlDecode(parts[1]) ?? "" : "";
+    }
+
+    return values;
+}
+
+static string? ResolveModelFilePath(string root, string? relativePath)
+{
+    if (string.IsNullOrWhiteSpace(relativePath) || Path.IsPathRooted(relativePath))
+    {
+        return null;
+    }
+
+    var rootPath = Path.GetFullPath(root);
+    var rootPrefix = rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar) + Path.DirectorySeparatorChar;
+    var fullPath = Path.GetFullPath(Path.Combine(rootPath, relativePath));
+    if (!fullPath.StartsWith(rootPrefix, StringComparison.Ordinal) ||
+        !fullPath.EndsWith(".cs", StringComparison.OrdinalIgnoreCase) ||
+        !File.Exists(fullPath))
+    {
+        return null;
+    }
+
+    return fullPath;
+}
+
 static async Task WriteJson(Stream stream, object payload, int statusCode = 200)
 {
     var json = JsonSerializer.Serialize(payload, AppJson.Options);
     await WriteText(stream, json, "application/json; charset=utf-8", statusCode);
 }
 
-static async Task WriteText(Stream stream, string content, string contentType, int statusCode = 200)
+static async Task WriteText(Stream stream, string content, string contentType, int statusCode = 200, IReadOnlyList<string>? extraHeaders = null)
 {
     var bytes = Encoding.UTF8.GetBytes(content);
     var reason = statusCode switch
@@ -325,8 +387,11 @@ static async Task WriteText(Stream stream, string content, string contentType, i
         500 => "Internal Server Error",
         _ => "OK"
     };
+    var extraHeaderText = extraHeaders is null || extraHeaders.Count == 0
+        ? ""
+        : string.Concat(extraHeaders.Select(header => header + "\r\n"));
     var header = Encoding.ASCII.GetBytes(
-        $"HTTP/1.1 {statusCode} {reason}\r\nContent-Type: {contentType}\r\nContent-Length: {bytes.Length}\r\nConnection: close\r\n\r\n");
+        $"HTTP/1.1 {statusCode} {reason}\r\nContent-Type: {contentType}\r\nContent-Length: {bytes.Length}\r\n{extraHeaderText}Connection: close\r\n\r\n");
     await stream.WriteAsync(header);
     await stream.WriteAsync(bytes);
 }
@@ -1496,7 +1561,35 @@ static class HtmlAssets
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
       font-size: 12px;
       overflow-wrap: anywhere;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
+    }
+
+    .file-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .file-action {
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #ffffff;
+      color: var(--navy);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .file-action:hover {
+      border-color: rgba(255, 147, 20, .75);
+      background: #fff8ef;
     }
 
     .badges {
@@ -1679,6 +1772,11 @@ static class HtmlAssets
     cancelSearchButton.addEventListener('click', cancelSearch);
     chooseRootButton?.addEventListener('click', chooseRoot);
     applyRootButton?.addEventListener('click', applyRoot);
+    resultsEl.addEventListener('click', event => {
+      const button = event.target.closest('[data-copy-file]');
+      if (!button) return;
+      copyModelFile(button.dataset.copyFile, button);
+    });
     jsonInput.addEventListener('keydown', event => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') search();
     });
@@ -1765,6 +1863,47 @@ static class HtmlAssets
       if (activeSearch) activeSearch.abort();
     }
 
+    function modelFileUrl(relativePath, download = false) {
+      const params = new URLSearchParams({ path: relativePath });
+      if (download) params.set('download', '1');
+      return `/api/file?${params.toString()}`;
+    }
+
+    async function copyModelFile(relativePath, button) {
+      if (!relativePath) return;
+      const original = button.textContent;
+      button.disabled = true;
+      try {
+        const response = await fetch(modelFileUrl(relativePath));
+        const text = await response.text();
+        if (!response.ok) throw new Error(text || 'Cannot copy file');
+        await writeClipboard(text);
+        button.textContent = 'Copied';
+        setTimeout(() => { button.textContent = original; }, 1200);
+      } catch (error) {
+        button.textContent = 'Copy failed';
+        setTimeout(() => { button.textContent = original; }, 1600);
+      } finally {
+        button.disabled = false;
+      }
+    }
+
+    async function writeClipboard(text) {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      textarea.remove();
+    }
+
     function render(payload) {
       if (!payload.results.length) {
         resultsEl.innerHTML = '<div class="empty">No matching model found.</div>';
@@ -1777,6 +1916,10 @@ static class HtmlAssets
           <div>
             <h2 class="name">${escapeHtml(result.model.name)}</h2>
             <div class="path">${escapeHtml(result.model.relativePath)}</div>
+            <div class="file-actions">
+              <a class="file-action" href="${modelFileUrl(result.model.relativePath, true)}">Download file</a>
+              <button class="file-action" type="button" data-copy-file="${escapeHtml(result.model.relativePath)}">Copy file</button>
+            </div>
             <div class="badges">
               <span class="badge">${result.matchedFields}/${result.jsonFieldCount} fields</span>
               <span class="badge">${result.propertyCount} properties</span>
